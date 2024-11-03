@@ -3,8 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+    [Range(0, 40)]
     public int movementSpeed = 5;
+
+    [Range(1, 80)]
     public int jumpHeight = 5;
+
+    [Range(1, 80)]
+    public int jumpSpeed = 5;
+
+    [Range(0.0f, 2.0f)]
+    public int jumpDrag = 1;
+
     public bool didJump = false;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
@@ -31,8 +41,9 @@ public class PlayerMovement : MonoBehaviour {
                 if (currColliderType == JumpType.FLOOR) {
                     jumpForce = new Vector3(0.0f, jumpHeight, 0.0f);
                 } else if (currColliderType == JumpType.WALL) {
+                    rb.drag = jumpDrag;
                     // Get the inverse of the direction that the wall faces
-                    jumpForce = new Vector3(jumpDir.x*jumpHeight, jumpDir.y+jumpHeight, jumpDir.z*jumpHeight);
+                    jumpForce = new Vector3(jumpDir.x*jumpSpeed, jumpDir.y+jumpHeight, jumpDir.z*jumpSpeed);
                     Debug.Log("Jumped off wall with direction of: " + jumpDir);
                     Debug.Log("Jump force vector: " + jumpForce);
                 }

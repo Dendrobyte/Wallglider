@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum JumpType {
-    FLOOR, WALL
+    FLOOR, WALL, RAIL
 }
 
 public class JumpObjectType : MonoBehaviour {
