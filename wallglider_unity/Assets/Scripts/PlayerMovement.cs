@@ -6,11 +6,13 @@ public class PlayerMovement : MonoBehaviour {
     [Range(0, 40)]
     public int movementSpeed = 5;
 
-    [Range(1, 80)]
-    public int jumpHeight = 5;
+    // TODO: Is there a way we can make these a variable based on the player size?
+    //       Something to come back to if we flesh this out.
+    [Range(1, 10)]
+    public int jumpHeight = 4;
 
-    [Range(1, 80)]
-    public int jumpSpeed = 5;
+    [Range(1, 10)]
+    public int jumpSpeed = 2;
 
     [Range(0.0f, 2.0f)]
     public int jumpDrag = 1;
@@ -39,11 +41,11 @@ public class PlayerMovement : MonoBehaviour {
                 JumpType currColliderType = currColliderGameObj.GetComponent<JumpObjectType>().jumpType;
                 Vector3 jumpForce = new Vector3();
                 if (currColliderType == JumpType.FLOOR) {
-                    jumpForce = new Vector3(0.0f, jumpHeight, 0.0f);
+                    jumpForce = new Vector3(0.0f, .25f * jumpHeight, 0.0f);
                 } else if (currColliderType == JumpType.WALL) {
                     rb.drag = jumpDrag;
                     // Get the inverse of the direction that the wall faces
-                    jumpForce = new Vector3(jumpDir.x*jumpSpeed, jumpDir.y+jumpHeight, jumpDir.z*jumpSpeed);
+                    jumpForce = new Vector3(jumpDir.x*jumpSpeed, .25f * jumpDir.y+jumpHeight, jumpDir.z*jumpSpeed);
                     Debug.Log("Jumped off wall with direction of: " + jumpDir);
                     Debug.Log("Jump force vector: " + jumpForce);
                 }
