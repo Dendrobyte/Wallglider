@@ -226,7 +226,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 26.939707
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -252,13 +252,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58875403}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.29751527, y: 0.6259681, z: -0.32344607, w: 0.6442293}
-  m_LocalPosition: {x: -21.163, y: 16.493, z: 10.174}
+  m_LocalRotation: {x: -0, y: -0.20094636, z: -0, w: 0.9796023}
+  m_LocalPosition: {x: 0.49067593, y: 1.5906293, z: -0.88288116}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 52.024, y: 86.338, z: -4.126}
+  m_Father: {fileID: 1362629543}
+  m_LocalEulerAnglesHint: {x: -27.574, y: 90.919, z: -2.863}
 --- !u!1 &225526117
 GameObject:
   m_ObjectHideFlags: 0
@@ -1304,6 +1304,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2128283694}
+  - {fileID: 58875407}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1549707719
@@ -1813,7 +1814,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2128283693}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 0.0000001
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1918,15 +1919,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 2128283695}
-  movementSpeed: 40
-  jumpForce: 8
+  ogMovementSpeed: 20
+  jumpYForce: 8
+  lookSpeed: 2
+  lookXLimit: 45
+  playerCamera: {fileID: 58875406}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 58875407}
   - {fileID: 1362629543}
   - {fileID: 365926429}
   - {fileID: 1563635324}
