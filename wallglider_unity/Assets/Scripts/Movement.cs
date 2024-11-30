@@ -16,6 +16,7 @@ public class Movement : MonoBehaviour {
 
     private Vector3 moveForce;
     private Vector3 jumpForce;
+    private Vector3 exitVelocity;
 
     private bool execJump = false; // To update in input and apply in physics
     private bool didJump = false; // To check and prevent double jumping
@@ -74,6 +75,7 @@ public class Movement : MonoBehaviour {
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+
     }
 
     // Apply any respective physics updates
@@ -89,18 +91,49 @@ public class Movement : MonoBehaviour {
     }
 
     public void OnCollisionEnter(Collision collisionInfo){
-        Debug.Log("Force on enter: " + rb.velocity.ToString());
+        // if (currColliderObj.GetComponent<JumpObjectType>().jumpType == JumpType.WALL) {
+        //     // Rotate the player to be parallel to the collision
+        //     // TODO: When implementing "last collided object", update this to not rotate more than once
+        //     transform.rotation *= Quaternion.Euler(0, 90, 0);
+        //     playerCamera.transform.localRotation *= Quaternion.Euler(0, 90, 0);
+        // }
     }
 
     public void OnCollisionStay(Collision collisionInfo) {
         didJump = false;
         currColliderObj = collisionInfo.gameObject;
         currColliderContact = collisionInfo.contacts[0];
+
+
+        // TODO (WORKING): Maintain velocity and force movement direction
+        // NOTE: Moving "forward" through a map is always towards positive X
+        //       In the demo map, moving "right" is negative Z and moving "left" is positive Z
+        if (currColliderObj.GetComponent<JumpObjectType>().jumpType == JumpType.WALL) {
+            Vector3 colliderNormal = currColliderContact.normal;
+            Debug.Log("COLLIDER NORMAL: " + colliderNormal.ToString());
+            Debug.Log("TRANSFORM ROTATION: " + transform.rotation.ToString());
+            float rotationRadians = 0f;
+            if (colliderNormal.z >= 0) { // Colliding with a left wall
+                rotationRadians = colliderNormal.x + transform.rotation.y;
+            } else if (colliderNormal.z < 0) { // Colliding with a right wall
+                rotationRadians = colliderNormal.x - transform.rotation.y;
+            }
+
+            Debug.Log("Rotation radians: " + rotationRadians);
+        
+            // Rotate the player by the calculating diff/sum of normal.x and their current viewing angle- around the y axis
+            // TODO: Can I just not process vector math right now?
+            transform.rotation *= Quaternion.Euler(0, Mathf.Rad2Deg * rotationRadians, 0);
+        }
+
+
     }
 
     public void OnCollisionExit(Collision collisionInfo) {
+        // We know that the force won't be adjusted after an exit, so this is the movement we want to stick with while colliding
+        exitVelocity = rb.velocity;
+
         currColliderObj = null;
-        Debug.Log("Force on exit: " + rb.velocity.ToString());
     }
 
     private void executePlayerJump() {
