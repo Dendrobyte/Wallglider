@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour {
 
     public Rigidbody rb;
-    public int ogMovementSpeed = 20;
+    public int ogMovementSpeed = 10;
     int currMovementSpeed;
     public float jumpYForce = 8f;
     public float lookSpeed = 2.0f;
@@ -43,8 +43,11 @@ public class Movement : MonoBehaviour {
         rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
         rotationY += Input.GetAxis("Mouse X") * lookSpeed; // Only for the camera
 
-        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0);
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+
+        // Update camera
+        Quaternion camRotation = Quaternion.LookRotation(transform.forward, transform.up);
+        playerCamera.transform.localRotation = camRotation;
         playerCamera.transform.position = transform.position;
 
         moveForce = Vector3.zero; // Avoid compounding
@@ -91,12 +94,18 @@ public class Movement : MonoBehaviour {
     }
 
     public void OnCollisionEnter(Collision collisionInfo){
-        // if (currColliderObj.GetComponent<JumpObjectType>().jumpType == JumpType.WALL) {
-        //     // Rotate the player to be parallel to the collision
-        //     // TODO: When implementing "last collided object", update this to not rotate more than once
-        //     transform.rotation *= Quaternion.Euler(0, 90, 0);
-        //     playerCamera.transform.localRotation *= Quaternion.Euler(0, 90, 0);
-        // }
+        currColliderObj = collisionInfo.gameObject;
+        if (currColliderObj.GetComponent<JumpObjectType>().jumpType == JumpType.WALL) {
+            // Rotate the player to be parallel to the collision
+            Vector3 colliderNormal = currColliderContact.normal;
+            Vector3 wallParallel = Vector3.Cross(colliderNormal, Vector3.up);
+            Quaternion playerRotation = Quaternion.LookRotation(-colliderNormal, Vector3.up);
+            transform.rotation = playerRotation;
+
+            // This only works for perfectly straight walls
+            // transform.rotation *= Quaternion.Euler(0, 90, 0);
+            // playerCamera.transform.localRotation *= Quaternion.Euler(0, 90, 0);
+        }
     }
 
     public void OnCollisionStay(Collision collisionInfo) {
@@ -110,20 +119,17 @@ public class Movement : MonoBehaviour {
         //       In the demo map, moving "right" is negative Z and moving "left" is positive Z
         if (currColliderObj.GetComponent<JumpObjectType>().jumpType == JumpType.WALL) {
             Vector3 colliderNormal = currColliderContact.normal;
-            Debug.Log("COLLIDER NORMAL: " + colliderNormal.ToString());
-            Debug.Log("TRANSFORM ROTATION: " + transform.rotation.ToString());
-            float rotationRadians = 0f;
-            if (colliderNormal.z >= 0) { // Colliding with a left wall
-                rotationRadians = colliderNormal.x + transform.rotation.y;
-            } else if (colliderNormal.z < 0) { // Colliding with a right wall
-                rotationRadians = colliderNormal.x - transform.rotation.y;
-            }
-
-            Debug.Log("Rotation radians: " + rotationRadians);
+            Quaternion playerRotation = Quaternion.FromToRotation(transform.forward, -colliderNormal);
+            // transform.rotation = playerRotation;
+            // float rotationRadians = 0f;
+            // if (colliderNormal.z >= 0) { // Colliding with a left wall
+            //     rotationRadians = colliderNormal.x + transform.rotation.y;
+            // } else if (colliderNormal.z < 0) { // Colliding with a right wall
+            //     rotationRadians = colliderNormal.x - transform.rotation.y;
+            // }
         
-            // Rotate the player by the calculating diff/sum of normal.x and their current viewing angle- around the y axis
-            // TODO: Can I just not process vector math right now?
-            transform.rotation *= Quaternion.Euler(0, Mathf.Rad2Deg * rotationRadians, 0);
+            // // Rotate the player by the calculating diff/sum of normal.x and their current viewing angle- around the y axis
+            // transform.rotation *= Quaternion.Euler(0, Mathf.Rad2Deg * rotationRadians, 0);
         }
 
 
